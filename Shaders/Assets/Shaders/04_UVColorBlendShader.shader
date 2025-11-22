@@ -80,9 +80,66 @@ Shader "Unlit/04_UVColorBlendShader" {
                 return outColour;
                 */
 
+                /*
+                * Using Inverse lerp to set a beginning and end to the blend
+                *
+                */
+                /*
                 float t = InverseLerp( _ColourStart, _ColourEnd, i.uv.x );
+                float4 outColour = lerp( _ColorA, _ColorB, t );
+                */
+                // return outColour;
+                
 
-                return t;
+
+                /*
+                * Dealing with out of range (0-1) values
+                *
+                * frac = v - floor(v)
+                *
+                * What it does is to repeat the values between 0 and 1
+                */
+                
+                // t = frac(t);
+
+
+
+                /*
+                *
+                * saturate() is a function that clamps values:
+                *
+                * if a value is less than 0, it converts it to 0
+                *  if a value is higher than 1, it makes it converts it to 1
+                *
+                */
+
+                /*
+                float t = saturate(InverseLerp( _ColourStart, _ColourEnd, i.uv.x ));
+                t = frac(t);
+
+                return t; // simple floats are automatically casted to float4
+                            // by using the same value for x, y, z and w
+                */
+
+
+                /*
+                *
+                * So this is he final code for color mixing with clamped values:
+                * The previous one was for visual debugging, to check if the values
+                * were actually being clamped)
+                *
+                */
+
+                float t = saturate(InverseLerp( _ColourStart, _ColourEnd, i.uv.x ));
+                float4 outColour = lerp( _ColorA, _ColorB, t );
+
+                return outColour;
+
+                /*
+                * https://developer.download.nvidia.com/cg/index_stdlib.html
+                * This link contains the documentation for the default cg language. It's deprecated.
+                */
+
             }
             ENDCG
         }
